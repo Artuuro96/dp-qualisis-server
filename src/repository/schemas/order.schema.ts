@@ -1,7 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { HydratedDocument, Types } from 'mongoose';
 import { Base } from './base.schema';
-import { Types, HydratedDocument } from 'mongoose';
-import { StatusEnum } from '../enums/status.enum';
 
 export type OrderDocument = HydratedDocument<Order>;
 
@@ -10,15 +9,21 @@ export class Order extends Base {
   _id?: Types.ObjectId;
 
   @Prop()
-  number: string;
+  workerId: string;
 
   @Prop()
-  status: StatusEnum;
+  name: string;
 
-  constructor(order: Partial<Order> = {}) {
-    super();
-    Object.assign(this, order);
-  }
+  @Prop()
+  status: string;
+
+  @Prop()
+  description?: string;
+
+  /*constructor(Order:Partial<Order>) {
+    super(Order)
+    Object.assign(this, Order)
+  }*/
 }
 
 export const OrderSchema = SchemaFactory.createForClass(Order);

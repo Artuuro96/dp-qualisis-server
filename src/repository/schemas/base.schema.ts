@@ -11,13 +11,13 @@ export class Base {
   @Prop({ default: new Date() })
   createdAt?: Date;
 
-  @Prop()
+  @Prop({ type: SchemaTypes.ObjectId })
   createdBy: string;
 
   @Prop({ default: new Date() })
   updatedAt?: Date;
 
-  @Prop()
+  @Prop({ type: SchemaTypes.ObjectId })
   updatedBy?: string;
 
   @Prop()

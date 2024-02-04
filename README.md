@@ -52,7 +52,7 @@ $ npm run format
 ## Start MongoDB
 We use Mongo DB as database server, so in order to run it using docker, you have to run this command
 ```bash
-$ docker-compose -f docker-compose.yml up
+$ docker-compose -f docker-compose.yml up -d
 ```
 
 ## Commit guidelines
