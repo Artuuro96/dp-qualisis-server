@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InstrumentRepository } from '../repository/repositories/instrument.repository';
 import { Instrument } from '../repository/schemas/instrument.schema';
 import { PaginateResult } from '../repository/interfaces/paginateResult.interface';
@@ -25,8 +21,7 @@ export class InstrumentService {
       createdBy: '63d8b7c773867f515b7b8adb', //Until we know how to get the UserId
     };
 
-    const instrumentCreated =
-      await this.instrumentRepository.create(newInstrument);
+    const instrumentCreated = await this.instrumentRepository.create(newInstrument);
     return instrumentCreated;
   }
 
@@ -37,12 +32,9 @@ export class InstrumentService {
    * @returns {Object} Returns the instrument found
    */
   async findById(instrumentId): Promise<Instrument> {
-    const instrumentFound =
-      await this.instrumentRepository.findById(instrumentId);
-    if (isNil(instrumentFound))
-      throw new NotFoundException('instrument not found');
-    if (instrumentFound.deleted)
-      throw new NotFoundException('instrument not found');
+    const instrumentFound = await this.instrumentRepository.findById(instrumentId);
+    if (isNil(instrumentFound)) throw new NotFoundException('instrument not found');
+    if (instrumentFound.deleted) throw new NotFoundException('instrument not found');
     return instrumentFound;
   }
 
@@ -54,11 +46,7 @@ export class InstrumentService {
    * @description Find all the instrument paginated
    * @returns {PaginateResult} Object with the instrument paginate
    */
-  async findAll(
-    keyValue = '',
-    skip = 0,
-    limit?: number,
-  ): Promise<PaginateResult> {
+  async findAll(keyValue = '', skip = 0, limit?: number): Promise<PaginateResult> {
     skip = Number(skip);
     limit = Number(limit);
     const options = {
@@ -91,22 +79,16 @@ export class InstrumentService {
    * @returns {Object} Returns the instrument updated
    */
   async update(instrument, instrumentId): Promise<Instrument> {
-    const instrumentFound = await this.instrumentRepository.findById(
-      instrumentId,
-      {
-        _id: 1,
-        deleted: 1,
-      },
-    );
+    const instrumentFound = await this.instrumentRepository.findById(instrumentId, {
+      _id: 1,
+      deleted: 1,
+    });
 
-    if (isNil(instrumentFound))
-      throw new NotFoundException('Instrument not found');
-    if (instrumentFound.deleted)
-      throw new NotFoundException('Instrument not found');
+    if (isNil(instrumentFound)) throw new NotFoundException('Instrument not found');
+    if (instrumentFound.deleted) throw new NotFoundException('Instrument not found');
 
     instrument.Id = instrumentId;
-    const instrumentUpdated =
-      await this.instrumentRepository.updateOne(instrument);
+    const instrumentUpdated = await this.instrumentRepository.updateOne(instrument);
     return instrumentUpdated;
   }
 
@@ -123,8 +105,7 @@ export class InstrumentService {
     });
 
     if (isNil(instrument)) throw new NotFoundException('Instrument not found');
-    if (instrument.deleted)
-      throw new BadRequestException('Instrument already deleted');
+    if (instrument.deleted) throw new BadRequestException('Instrument already deleted');
 
     instrument.deleted = true;
     return this.instrumentRepository.updateOne(instrument);

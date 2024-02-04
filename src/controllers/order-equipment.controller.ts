@@ -1,13 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Patch,
-  Post,
-  Param,
-  Delete,
-  Query,
-} from '@nestjs/common';
+import { Body, Controller, Get, Patch, Post, Param, Delete, Query } from '@nestjs/common';
 import { OrderEquipment } from '../repository/schemas/orderEquipment.schema';
 import { PaginateResult } from '../repository/interfaces/paginateResult.interface';
 import { OrderEquipmentDTO } from '../dtos/orderEquipment.dto';
@@ -19,23 +10,17 @@ export class OrderEquipmentController {
   constructor(private readonly orderEquipmentService: OrderEquipmentService) {}
 
   @Post()
-  async create(
-    @Body() orderEquipment: OrderEquipmentDTO,
-  ): Promise<OrderEquipment> {
+  async create(@Body() orderEquipment: OrderEquipmentDTO): Promise<OrderEquipment> {
     return this.orderEquipmentService.create(orderEquipment);
   }
 
   @Get('/:orderEquipmentId')
-  async findById(
-    @Param('orderEquipmentId') orderEquipmentId: string,
-  ): Promise<OrderEquipment> {
+  async findById(@Param('orderEquipmentId') orderEquipmentId: string): Promise<OrderEquipment> {
     return this.orderEquipmentService.findById(orderEquipmentId);
   }
 
   @Get()
-  async findAll(
-    @Query() { skip, limit, keyValue }: PaginationParamsDTO,
-  ): Promise<PaginateResult> {
+  async findAll(@Query() { skip, limit, keyValue }: PaginationParamsDTO): Promise<PaginateResult> {
     return this.orderEquipmentService.findAll(keyValue, skip, limit);
   }
 
@@ -48,9 +33,7 @@ export class OrderEquipmentController {
   }
 
   @Delete('/:orderEquipmentId')
-  async delete(
-    @Param('orderEquipmentId') orderEquipmentId: string,
-  ): Promise<OrderEquipment> {
+  async delete(@Param('orderEquipmentId') orderEquipmentId: string): Promise<OrderEquipment> {
     return this.orderEquipmentService.delete(orderEquipmentId);
   }
 }

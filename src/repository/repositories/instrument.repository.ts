@@ -34,12 +34,8 @@ export class InstrumentRepository {
   }
 
   async updateOne(instrument): Promise<Instrument> {
-    return this.instrumentModel.findOneAndUpdate(
-      { _id: instrument._id },
-      instrument,
-      {
-        new: true,
-      },
-    );
+    return this.instrumentModel.findOneAndUpdate({ _id: instrument._id }, instrument, {
+      new: true,
+    });
   }
 }

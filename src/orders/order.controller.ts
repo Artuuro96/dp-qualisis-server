@@ -11,19 +11,13 @@ export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
   @Get('/:id')
-  async findById(
-    @Param('id') id: string,
-    @ExecutionCtx() executionCtx: Context,
-  ): Promise<Order> {
+  async findById(@Param('id') id: string, @ExecutionCtx() executionCtx: Context): Promise<Order> {
     console.log(executionCtx);
     return this.orderService.findById(id);
   }
 
   @Post()
-  async create(
-    @Body() order: Order,
-    @ExecutionCtx() executionCtx: Context,
-  ): Promise<Order> {
+  async create(@Body() order: Order, @ExecutionCtx() executionCtx: Context): Promise<Order> {
     console.log(executionCtx);
     return await this.orderService.create(order);
   }

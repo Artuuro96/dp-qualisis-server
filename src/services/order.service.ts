@@ -1,13 +1,10 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { OrderRepository } from '../repository/repositories/order.repository';
 import { Order } from '../repository/schemas/order.schema';
 import { PaginateResult } from '../repository/interfaces/paginateResult.interface';
 import { OrderDTO } from '../dtos/order.dto';
 import { isNil } from 'lodash';
+import { Context } from 'src/auth/context/execution-ctx';
 
 @Injectable()
 export class OrderService {
@@ -19,10 +16,10 @@ export class OrderService {
    * @description Creates a order
    * @returns {Object} Returns the order
    */
-  async create(order: OrderDTO): Promise<Order> {
+  async create(order: OrderDTO, executionCtx: Context): Promise<Order> {
     const newOrder: Order = {
       ...order,
-      createdBy: '63d8b7c773867f515b7b8adb', //Until we know how to get the UserId
+      createdBy: executionCtx.userId,
     };
 
     const orderCreated = await this.orderRepository.create(newOrder);
@@ -50,11 +47,7 @@ export class OrderService {
    * @description Find all the order paginated
    * @returns {PaginateResult} Object with the order paginate
    */
-  async findAll(
-    keyValue = '',
-    skip = 0,
-    limit?: number,
-  ): Promise<PaginateResult> {
+  async findAll(keyValue = '', skip = 0, limit?: number): Promise<PaginateResult> {
     skip = Number(skip);
     limit = Number(limit);
     const options = {

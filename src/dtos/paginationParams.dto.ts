@@ -1,11 +1,5 @@
 import { Type } from 'class-transformer';
-import {
-  IsString,
-  IsOptional,
-  IsNotEmpty,
-  IsNumber,
-  Min,
-} from 'class-validator';
+import { IsString, IsOptional, IsNotEmpty, IsNumber, Min } from 'class-validator';
 
 export class PaginationParamsDTO {
   @IsOptional()

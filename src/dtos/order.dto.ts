@@ -1,10 +1,4 @@
-import {
-  IsString,
-  IsNotEmpty,
-  IsOptional,
-  IsDefined,
-  IsEnum,
-} from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, IsDefined, IsEnum } from 'class-validator';
 import { StatusEnum } from '../repository/enums/status.enum';
 
 export class OrderDTO {
@@ -17,8 +11,7 @@ export class OrderDTO {
   @IsNotEmpty()
   @IsDefined()
   @IsEnum(StatusEnum, {
-    message:
-      'El valor de "status" debe ser uno de: COMPLETED, ASSIGNED, FINISHED, CREATED, IN_PROGRESS',
+    message: 'El valor de "status" debe ser uno de: COMPLETED, ASSIGNED, FINISHED, CREATED, IN_PROGRESS',
   })
   status: string;
 

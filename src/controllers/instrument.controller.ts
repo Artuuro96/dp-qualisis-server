@@ -1,13 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Patch,
-  Post,
-  Param,
-  Delete,
-  Query,
-} from '@nestjs/common';
+import { Body, Controller, Get, Patch, Post, Param, Delete, Query } from '@nestjs/common';
 import { Instrument } from '../repository/schemas/instrument.schema';
 import { PaginateResult } from '../repository/interfaces/paginateResult.interface';
 import { InstrumentDTO } from '../dtos/instrument.dto';
@@ -24,16 +15,12 @@ export class InstrumentController {
   }
 
   @Get('/:instrumentId')
-  async findById(
-    @Param('instrumentId') instrumentId: string,
-  ): Promise<Instrument> {
+  async findById(@Param('instrumentId') instrumentId: string): Promise<Instrument> {
     return this.instrumentService.findById(instrumentId);
   }
 
   @Get()
-  async findAll(
-    @Query() { skip, limit, keyValue }: PaginationParamsDTO,
-  ): Promise<PaginateResult> {
+  async findAll(@Query() { skip, limit, keyValue }: PaginationParamsDTO): Promise<PaginateResult> {
     return this.instrumentService.findAll(keyValue, skip, limit);
   }
 
@@ -46,9 +33,7 @@ export class InstrumentController {
   }
 
   @Delete('/:instrumentId')
-  async delete(
-    @Param('instrumentId') instrumentId: string,
-  ): Promise<Instrument> {
+  async delete(@Param('instrumentId') instrumentId: string): Promise<Instrument> {
     return this.instrumentService.delete(instrumentId);
   }
 }

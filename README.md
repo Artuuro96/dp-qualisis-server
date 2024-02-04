@@ -55,5 +55,9 @@ We use Mongo DB as database server, so in order to run it using docker, you have
 $ docker-compose -f docker-compose.yml up -d
 ```
 
+## Authentication and Authorization
+In order to run locally the project and test it, you need to run ACMA Service which is in charge of authenticate and autorize every user request.
+You have to download the repo https://github.com/Artuuro96/dp-acma-server and follow the steps to run it. 
+
 ## Commit guidelines
 In order to create a new commit we encourage to follow the commit guideline specified in the [pull_request_template.md](./pull_request_template) file.

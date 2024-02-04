@@ -4,9 +4,7 @@ import { isNil } from 'lodash';
 import { Order, OrderDocument } from '../schemas/order.schema';
 
 export class OrderRepository {
-  constructor(
-    @InjectModel(Order.name) private orderModel: Model<OrderDocument>,
-  ) {}
+  constructor(@InjectModel(Order.name) private orderModel: Model<OrderDocument>) {}
   async create(order: Order): Promise<Order> {
     return this.orderModel.create(order);
   }

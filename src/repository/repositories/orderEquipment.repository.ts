@@ -1,10 +1,7 @@
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { isNil } from 'lodash';
-import {
-  OrderEquipment,
-  OrderEquipmentDocument,
-} from '../schemas/orderEquipment.schema';
+import { OrderEquipment, OrderEquipmentDocument } from '../schemas/orderEquipment.schema';
 
 export class OrderEquipmentRepository {
   constructor(
@@ -37,12 +34,8 @@ export class OrderEquipmentRepository {
   }
 
   async updateOne(orderEquipment): Promise<OrderEquipment> {
-    return this.orderEquipmentModel.findOneAndUpdate(
-      { _id: orderEquipment._id },
-      orderEquipment,
-      {
-        new: true,
-      },
-    );
+    return this.orderEquipmentModel.findOneAndUpdate({ _id: orderEquipment._id }, orderEquipment, {
+      new: true,
+    });
   }
 }
