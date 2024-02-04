@@ -4,7 +4,10 @@ import { ConfigService } from 'src/config/config.service';
 import { Order, OrderSchema } from './schemas/order.schema';
 import { OrderRepository } from './repositories/order.repository';
 
-import { OrderEquipment, OrderEquipmentSchema } from './schemas/orderEquipment.schema';
+import {
+  OrderEquipment,
+  OrderEquipmentSchema,
+} from './schemas/orderEquipment.schema';
 import { OrderEquipmentRepository } from './repositories/orderEquipment.repository';
 
 import { Instrument, InstrumentSchema } from './schemas/instrument.schema';

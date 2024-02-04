@@ -25,7 +25,7 @@ export class OrderRepository {
   }
 
   async count(query): Promise<number> {
-    return this.orderModel.countDocuments(query)
+    return this.orderModel.countDocuments(query);
   }
 
   async findById(orderId, projection?): Promise<Order> {

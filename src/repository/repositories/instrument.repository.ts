@@ -5,7 +5,8 @@ import { Instrument, InstrumentDocument } from '../schemas/instrument.schema';
 
 export class InstrumentRepository {
   constructor(
-    @InjectModel(Instrument.name) private instrumentModel: Model<InstrumentDocument>,
+    @InjectModel(Instrument.name)
+    private instrumentModel: Model<InstrumentDocument>,
   ) {}
   async create(instrument: Instrument): Promise<Instrument> {
     return this.instrumentModel.create(instrument);
@@ -25,7 +26,7 @@ export class InstrumentRepository {
   }
 
   async count(query): Promise<number> {
-    return this.instrumentModel.countDocuments(query)
+    return this.instrumentModel.countDocuments(query);
   }
 
   async findById(instrumentId, projection?): Promise<Instrument> {
@@ -33,8 +34,12 @@ export class InstrumentRepository {
   }
 
   async updateOne(instrument): Promise<Instrument> {
-    return this.instrumentModel.findOneAndUpdate({ _id: instrument._id }, instrument, {
-      new: true,
-    });
+    return this.instrumentModel.findOneAndUpdate(
+      { _id: instrument._id },
+      instrument,
+      {
+        new: true,
+      },
+    );
   }
 }

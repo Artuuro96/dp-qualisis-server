@@ -1,17 +1,13 @@
-import {
-    IsString,
-    IsNotEmpty,
-    IsDefined,
-  } from 'class-validator';
-  
-  export class OrderEquipmentDTO {
-    @IsString()
-    @IsNotEmpty()
-    @IsDefined()
-    instrumentId: string;
+import { IsString, IsNotEmpty, IsDefined } from 'class-validator';
 
-    @IsString()
-    @IsNotEmpty()
-    @IsDefined()
-    orderId: string;
-  }
+export class OrderEquipmentDTO {
+  @IsString()
+  @IsNotEmpty()
+  @IsDefined()
+  instrumentId: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @IsDefined()
+  orderId: string;
+}

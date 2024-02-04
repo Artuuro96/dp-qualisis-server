@@ -1,11 +1,15 @@
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { isNil } from 'lodash';
-import { OrderEquipment, OrderEquipmentDocument } from '../schemas/orderEquipment.schema';
+import {
+  OrderEquipment,
+  OrderEquipmentDocument,
+} from '../schemas/orderEquipment.schema';
 
 export class OrderEquipmentRepository {
   constructor(
-    @InjectModel(OrderEquipment.name) private orderEquipmentModel: Model<OrderEquipmentDocument>,
+    @InjectModel(OrderEquipment.name)
+    private orderEquipmentModel: Model<OrderEquipmentDocument>,
   ) {}
   async create(orderEquipment: OrderEquipment): Promise<OrderEquipment> {
     return this.orderEquipmentModel.create(orderEquipment);
@@ -25,7 +29,7 @@ export class OrderEquipmentRepository {
   }
 
   async count(query): Promise<number> {
-    return this.orderEquipmentModel.countDocuments(query)
+    return this.orderEquipmentModel.countDocuments(query);
   }
 
   async findById(orderEquipmentId, projection?): Promise<OrderEquipment> {
@@ -33,8 +37,12 @@ export class OrderEquipmentRepository {
   }
 
   async updateOne(orderEquipment): Promise<OrderEquipment> {
-    return this.orderEquipmentModel.findOneAndUpdate({ _id: orderEquipment._id }, orderEquipment, {
-      new: true,
-    });
+    return this.orderEquipmentModel.findOneAndUpdate(
+      { _id: orderEquipment._id },
+      orderEquipment,
+      {
+        new: true,
+      },
+    );
   }
 }

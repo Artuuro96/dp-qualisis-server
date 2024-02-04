@@ -1,5 +1,3 @@
-
-
 import {
   Body,
   Controller,
@@ -18,23 +16,23 @@ import { OrderService } from '../services/order.service';
 
 @Controller('orders')
 export class OrderController {
-  constructor(private readonly OrderService: OrderService) {}
+  constructor(private readonly orderService: OrderService) {}
 
   @Post()
   async create(@Body() order: OrderDTO): Promise<Order> {
-    return this.OrderService.create(order);
+    return this.orderService.create(order);
   }
 
   @Get('/:orderId')
   async findById(@Param('orderId') orderId: string): Promise<Order> {
-    return this.OrderService.findById(orderId);
+    return this.orderService.findById(orderId);
   }
 
   @Get()
   async findAll(
     @Query() { skip, limit, keyValue }: PaginationParamsDTO,
   ): Promise<PaginateResult> {
-    return this.OrderService.findAll(keyValue, skip, limit);
+    return this.orderService.findAll(keyValue, skip, limit);
   }
 
   @Patch('/:orderId')
@@ -42,11 +40,11 @@ export class OrderController {
     @Body() order: Partial<Order>,
     @Param('orderId') orderId: string,
   ): Promise<Order> {
-    return this.OrderService.update(order, orderId);
+    return this.orderService.update(order, orderId);
   }
 
   @Delete('/:orderId')
   async delete(@Param('orderId') orderId: string): Promise<Order> {
-    return this.OrderService.delete(orderId);
+    return this.orderService.delete(orderId);
   }
 }

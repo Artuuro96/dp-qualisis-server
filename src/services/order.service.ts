@@ -11,9 +11,7 @@ import { isNil } from 'lodash';
 
 @Injectable()
 export class OrderService {
-  constructor(
-    private orderRepository: OrderRepository,
-  ) {}
+  constructor(private orderRepository: OrderRepository) {}
 
   /**
    * @name create

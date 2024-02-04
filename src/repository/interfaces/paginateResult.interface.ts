@@ -1,6 +1,6 @@
 export interface PaginateResult {
-    result: object[];
-    total: number;
-    page: number;
-    pages: number;
-  }
+  result: object[];
+  total: number;
+  page: number;
+  pages: number;
+}

@@ -1,5 +1,3 @@
-
-
 import {
   Body,
   Controller,
@@ -18,23 +16,27 @@ import { OrderEquipmentService } from '../services/orderEquipment.service';
 
 @Controller('orderEquipments')
 export class OrderEquipmentController {
-  constructor(private readonly OrderEquipmentService: OrderEquipmentService) {}
+  constructor(private readonly orderEquipmentService: OrderEquipmentService) {}
 
   @Post()
-  async create(@Body() orderEquipment: OrderEquipmentDTO): Promise<OrderEquipment> {
-    return this.OrderEquipmentService.create(orderEquipment);
+  async create(
+    @Body() orderEquipment: OrderEquipmentDTO,
+  ): Promise<OrderEquipment> {
+    return this.orderEquipmentService.create(orderEquipment);
   }
 
   @Get('/:orderEquipmentId')
-  async findById(@Param('orderEquipmentId') orderEquipmentId: string): Promise<OrderEquipment> {
-    return this.OrderEquipmentService.findById(orderEquipmentId);
+  async findById(
+    @Param('orderEquipmentId') orderEquipmentId: string,
+  ): Promise<OrderEquipment> {
+    return this.orderEquipmentService.findById(orderEquipmentId);
   }
 
   @Get()
   async findAll(
     @Query() { skip, limit, keyValue }: PaginationParamsDTO,
   ): Promise<PaginateResult> {
-    return this.OrderEquipmentService.findAll(keyValue, skip, limit);
+    return this.orderEquipmentService.findAll(keyValue, skip, limit);
   }
 
   @Patch('/:orderEquipmentId')
@@ -42,11 +44,13 @@ export class OrderEquipmentController {
     @Body() orderEquipment: Partial<OrderEquipment>,
     @Param('orderEquipmentId') orderEquipmentId: string,
   ): Promise<OrderEquipment> {
-    return this.OrderEquipmentService.update(orderEquipment, orderEquipmentId);
+    return this.orderEquipmentService.update(orderEquipment, orderEquipmentId);
   }
 
   @Delete('/:orderEquipmentId')
-  async delete(@Param('orderEquipmentId') orderEquipmentId: string): Promise<OrderEquipment> {
-    return this.OrderEquipmentService.delete(orderEquipmentId);
+  async delete(
+    @Param('orderEquipmentId') orderEquipmentId: string,
+  ): Promise<OrderEquipment> {
+    return this.orderEquipmentService.delete(orderEquipmentId);
   }
 }

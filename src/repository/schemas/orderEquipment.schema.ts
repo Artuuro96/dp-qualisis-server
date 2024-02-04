@@ -20,4 +20,5 @@ export class OrderEquipment extends Base {
   }*/
 }
 
-export const OrderEquipmentSchema = SchemaFactory.createForClass(OrderEquipment);
+export const OrderEquipmentSchema =
+  SchemaFactory.createForClass(OrderEquipment);

@@ -1,5 +1,3 @@
-
-
 import {
   Body,
   Controller,
@@ -18,23 +16,25 @@ import { InstrumentService } from '../services/instrument.service';
 
 @Controller('instruments')
 export class InstrumentController {
-  constructor(private readonly InstrumentService: InstrumentService) {}
+  constructor(private readonly instrumentService: InstrumentService) {}
 
   @Post()
   async create(@Body() instrument: InstrumentDTO): Promise<Instrument> {
-    return this.InstrumentService.create(instrument);
+    return this.instrumentService.create(instrument);
   }
 
   @Get('/:instrumentId')
-  async findById(@Param('instrumentId') instrumentId: string): Promise<Instrument> {
-    return this.InstrumentService.findById(instrumentId);
+  async findById(
+    @Param('instrumentId') instrumentId: string,
+  ): Promise<Instrument> {
+    return this.instrumentService.findById(instrumentId);
   }
 
   @Get()
   async findAll(
     @Query() { skip, limit, keyValue }: PaginationParamsDTO,
   ): Promise<PaginateResult> {
-    return this.InstrumentService.findAll(keyValue, skip, limit);
+    return this.instrumentService.findAll(keyValue, skip, limit);
   }
 
   @Patch('/:instrumentId')
@@ -42,11 +42,13 @@ export class InstrumentController {
     @Body() instrument: Partial<Instrument>,
     @Param('instrumentId') instrumentId: string,
   ): Promise<Instrument> {
-    return this.InstrumentService.update(instrument, instrumentId);
+    return this.instrumentService.update(instrument, instrumentId);
   }
 
   @Delete('/:instrumentId')
-  async delete(@Param('instrumentId') instrumentId: string): Promise<Instrument> {
-    return this.InstrumentService.delete(instrumentId);
+  async delete(
+    @Param('instrumentId') instrumentId: string,
+  ): Promise<Instrument> {
+    return this.instrumentService.delete(instrumentId);
   }
 }
