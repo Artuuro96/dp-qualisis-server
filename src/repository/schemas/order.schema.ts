@@ -12,6 +12,9 @@ export class Order extends Base {
   workerId: string;
 
   @Prop()
+  vendorId: string;
+
+  @Prop()
   name: string;
 
   @Prop()

@@ -1,17 +1,24 @@
-import { Body, Controller, Get, Patch, Post, Param, Delete, Query } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Post, Param, Delete, Query, UseGuards } from '@nestjs/common';
 import { Instrument } from '../repository/schemas/instrument.schema';
 import { PaginateResult } from '../repository/interfaces/paginateResult.interface';
 import { InstrumentDTO } from '../dtos/instrument.dto';
 import { PaginationParamsDTO } from '../dtos/paginationParams.dto';
-import { InstrumentService } from '../services/instrument.service';
+import { InstrumentService } from './instrument.service';
+import { AuthGuard } from 'src/auth/guards/auth.guard';
+import { ExecutionCtx } from 'src/auth/decorators/execution-ctx.decorator';
+import { Context } from 'src/auth/context/execution-ctx';
 
 @Controller('instruments')
+@UseGuards(AuthGuard)
 export class InstrumentController {
   constructor(private readonly instrumentService: InstrumentService) {}
 
   @Post()
-  async create(@Body() instrument: InstrumentDTO): Promise<Instrument> {
-    return this.instrumentService.create(instrument);
+  async create(
+    @Body() instrument: InstrumentDTO,
+    @ExecutionCtx() executionCtx: Context,
+  ): Promise<Instrument> {
+    return this.instrumentService.create(instrument, executionCtx);
   }
 
   @Get('/:instrumentId')
@@ -28,12 +35,16 @@ export class InstrumentController {
   async update(
     @Body() instrument: Partial<Instrument>,
     @Param('instrumentId') instrumentId: string,
+    @ExecutionCtx() executionCtx: Context,
   ): Promise<Instrument> {
-    return this.instrumentService.update(instrument, instrumentId);
+    return this.instrumentService.update(instrument, instrumentId, executionCtx);
   }
 
   @Delete('/:instrumentId')
-  async delete(@Param('instrumentId') instrumentId: string): Promise<Instrument> {
-    return this.instrumentService.delete(instrumentId);
+  async delete(
+    @Param('instrumentId') instrumentId: string,
+    @ExecutionCtx() executionCtx: Context,
+  ): Promise<Instrument> {
+    return this.instrumentService.delete(instrumentId, executionCtx);
   }
 }

@@ -1,6 +1,9 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Post, Param, Delete, Query, UseGuards } from '@nestjs/common';
+import { Order } from '../repository/schemas/order.schema';
+import { PaginateResult } from '../repository/interfaces/paginateResult.interface';
+import { OrderDTO } from '../dtos/order.dto';
+import { PaginationParamsDTO } from '../dtos/paginationParams.dto';
 import { OrderService } from './order.service';
-import { Order } from 'src/repository/schemas/order.schema';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { ExecutionCtx } from 'src/auth/decorators/execution-ctx.decorator';
 import { Context } from 'src/auth/context/execution-ctx';
@@ -10,15 +13,33 @@ import { Context } from 'src/auth/context/execution-ctx';
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
-  @Get('/:id')
-  async findById(@Param('id') id: string, @ExecutionCtx() executionCtx: Context): Promise<Order> {
+  @Post()
+  async create(@Body() order: OrderDTO, @ExecutionCtx() executionCtx: Context): Promise<Order> {
     console.log(executionCtx);
-    return this.orderService.findById(id);
+    return this.orderService.create(order, executionCtx);
   }
 
-  @Post()
-  async create(@Body() order: Order, @ExecutionCtx() executionCtx: Context): Promise<Order> {
-    console.log(executionCtx);
-    return await this.orderService.create(order);
+  @Get('/:orderId')
+  async findById(@Param('orderId') orderId: string): Promise<Order> {
+    return this.orderService.findById(orderId);
+  }
+
+  @Get()
+  async findAll(@Query() { skip, limit, keyValue }: PaginationParamsDTO): Promise<PaginateResult> {
+    return this.orderService.findAll(keyValue, skip, limit);
+  }
+
+  @Patch('/:orderId')
+  async update(
+    @Body() order: Partial<Order>,
+    @Param('orderId') orderId: string,
+    @ExecutionCtx() executionCtx: Context,
+  ): Promise<Order> {
+    return this.orderService.update(order, orderId, executionCtx);
+  }
+
+  @Delete('/:orderId')
+  async delete(@Param('orderId') orderId: string, @ExecutionCtx() executionCtx: Context): Promise<Order> {
+    return this.orderService.delete(orderId, executionCtx);
   }
 }

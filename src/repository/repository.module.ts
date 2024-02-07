@@ -4,8 +4,8 @@ import { ConfigService } from 'src/config/config.service';
 import { Order, OrderSchema } from './schemas/order.schema';
 import { OrderRepository } from './repositories/order.repository';
 
-import { OrderEquipment, OrderEquipmentSchema } from './schemas/orderEquipment.schema';
-import { OrderEquipmentRepository } from './repositories/orderEquipment.repository';
+import { Entry, EntrySchema } from './schemas/entry.schema';
+import { EntryRepository } from './repositories/entry.repository';
 
 import { Instrument, InstrumentSchema } from './schemas/instrument.schema';
 import { InstrumentRepository } from './repositories/instrument.repository';
@@ -23,8 +23,8 @@ const config = new ConfigService();
         schema: OrderSchema,
       },
       {
-        name: OrderEquipment.name,
-        schema: OrderEquipmentSchema,
+        name: Entry.name,
+        schema: EntrySchema,
       },
       {
         name: Instrument.name,
@@ -32,7 +32,7 @@ const config = new ConfigService();
       },
     ]),
   ],
-  exports: [OrderRepository, OrderEquipmentRepository, InstrumentRepository],
-  providers: [OrderRepository, OrderEquipmentRepository, InstrumentRepository],
+  exports: [OrderRepository, EntryRepository, InstrumentRepository],
+  providers: [OrderRepository, EntryRepository, InstrumentRepository],
 })
 export class RepositoryModule {}

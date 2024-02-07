@@ -4,6 +4,7 @@ import { Instrument } from '../repository/schemas/instrument.schema';
 import { PaginateResult } from '../repository/interfaces/paginateResult.interface';
 import { InstrumentDTO } from '../dtos/instrument.dto';
 import { isNil } from 'lodash';
+import { Context } from 'src/auth/context/execution-ctx';
 
 @Injectable()
 export class InstrumentService {
@@ -15,10 +16,10 @@ export class InstrumentService {
    * @description Creates a instrument
    * @returns {Object} Returns the instrument
    */
-  async create(instrument: InstrumentDTO): Promise<Instrument> {
+  async create(instrument: InstrumentDTO, executionCtx: Context): Promise<Instrument> {
     const newInstrument: Instrument = {
       ...instrument,
-      createdBy: '63d8b7c773867f515b7b8adb', //Until we know how to get the UserId
+      createdBy: executionCtx.userId,
     };
 
     const instrumentCreated = await this.instrumentRepository.create(newInstrument);
@@ -78,7 +79,7 @@ export class InstrumentService {
    * @description Update the instrument
    * @returns {Object} Returns the instrument updated
    */
-  async update(instrument, instrumentId): Promise<Instrument> {
+  async update(instrument, instrumentId, executionCtx: Context): Promise<Instrument> {
     const instrumentFound = await this.instrumentRepository.findById(instrumentId, {
       _id: 1,
       deleted: 1,
@@ -88,6 +89,7 @@ export class InstrumentService {
     if (instrumentFound.deleted) throw new NotFoundException('Instrument not found');
 
     instrument.Id = instrumentId;
+    instrument.updatedBy = executionCtx.userId;
     const instrumentUpdated = await this.instrumentRepository.updateOne(instrument);
     return instrumentUpdated;
   }
@@ -98,7 +100,7 @@ export class InstrumentService {
    * @description Deletes the instrument but not remove from the DB
    * @returns {Object} Returns the result from the deletion
    */
-  async delete(instrumentId): Promise<Instrument> {
+  async delete(instrumentId, executionCtx: Context): Promise<Instrument> {
     const instrument = await this.instrumentRepository.findById(instrumentId, {
       _id: 1,
       deleted: 1,
@@ -108,6 +110,7 @@ export class InstrumentService {
     if (instrument.deleted) throw new BadRequestException('Instrument already deleted');
 
     instrument.deleted = true;
+    instrument.deletedBy = executionCtx.userId;
     return this.instrumentRepository.updateOne(instrument);
   }
 }

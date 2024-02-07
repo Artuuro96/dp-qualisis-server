@@ -7,4 +7,4 @@ import { AcmaClient } from './acma.client';
   imports: [ConfigModule],
   exports: [AcmaClient],
 })
-export class ClientModule {}
+export class AcmaClientModule {}

@@ -4,7 +4,12 @@ export class InstrumentDTO {
   @IsString()
   @IsNotEmpty()
   @IsDefined()
-  clientId: string;
+  entryId: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @IsDefined()
+  orderId: string;
 
   @IsString()
   @IsNotEmpty()

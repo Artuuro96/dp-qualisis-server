@@ -9,7 +9,10 @@ export class Instrument extends Base {
   _id?: Types.ObjectId;
 
   @Prop()
-  clientId: string;
+  entryId: string;
+
+  @Prop()
+  orderId: string;
 
   @Prop()
   name: string;

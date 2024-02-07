@@ -1,5 +1,5 @@
 import { Prop, Schema } from '@nestjs/mongoose';
-import { HydratedDocument, SchemaTypes } from 'mongoose';
+import { HydratedDocument } from 'mongoose';
 
 export type BaseDocument = HydratedDocument<Base>;
 
@@ -11,19 +11,19 @@ export class Base {
   @Prop({ default: new Date() })
   createdAt?: Date;
 
-  @Prop({ type: SchemaTypes.ObjectId })
+  @Prop()
   createdBy: string;
 
   @Prop({ default: new Date() })
   updatedAt?: Date;
 
-  @Prop({ type: SchemaTypes.ObjectId })
+  @Prop()
   updatedBy?: string;
 
   @Prop()
   deletedAt?: Date;
 
-  @Prop({ type: SchemaTypes.ObjectId })
+  @Prop()
   deletedBy?: string;
 
   /*constructor(base:Partial<Base>) {

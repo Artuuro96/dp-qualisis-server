@@ -22,6 +22,11 @@ export class OrderDTO {
 
   @IsString()
   @IsNotEmpty()
+  @IsDefined()
+  vendorId: string;
+
+  @IsString()
+  @IsNotEmpty()
   @IsOptional()
   description?: string;
 }
