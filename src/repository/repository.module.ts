@@ -10,6 +10,9 @@ import { EntryRepository } from './repositories/entry.repository';
 import { Instrument, InstrumentSchema } from './schemas/instrument.schema';
 import { InstrumentRepository } from './repositories/instrument.repository';
 
+import { Client, ClientSchema } from './schemas/client.schema';
+import { ClientRepository } from './repositories/client.repository';
+
 const config = new ConfigService();
 
 @Module({
@@ -30,9 +33,13 @@ const config = new ConfigService();
         name: Instrument.name,
         schema: InstrumentSchema,
       },
+      {
+        name: Client.name,
+        schema: ClientSchema,
+      },
     ]),
   ],
-  exports: [OrderRepository, EntryRepository, InstrumentRepository],
-  providers: [OrderRepository, EntryRepository, InstrumentRepository],
+  exports: [OrderRepository, EntryRepository, InstrumentRepository, ClientRepository],
+  providers: [OrderRepository, EntryRepository, InstrumentRepository, ClientRepository],
 })
 export class RepositoryModule {}
