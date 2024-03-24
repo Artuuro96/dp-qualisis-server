@@ -19,6 +19,14 @@ export class OrderController {
     return this.orderService.create(order, executionCtx);
   }
 
+  @Get('/by-dates')
+  async findByDates(
+    @Query() { skip, limit, startDate, endDate }: PaginationParamsDTO,
+    @ExecutionCtx() executionCtx: Context,
+  ): Promise<PaginateResult> {
+    return this.orderService.findByDates(executionCtx, skip, limit, startDate, endDate);
+  }
+
   @Get('/:orderId')
   async findById(@Param('orderId') orderId: string): Promise<Order> {
     return this.orderService.findById(orderId);

@@ -18,4 +18,14 @@ export class PaginationParamsDTO {
   @IsString()
   @IsNotEmpty()
   keyValue?: string;
+
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  startDate?: string;
+
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  endDate?: string;
 }

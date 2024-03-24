@@ -45,4 +45,14 @@ export class OrderDTO {
     required: false,
   })
   description?: string;
+
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  startDate?: string;
+
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  endDate?: string;
 }

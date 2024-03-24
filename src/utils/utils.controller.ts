@@ -18,7 +18,7 @@ import { MulterFile } from 'multer';
 export class UtilController {
   constructor(private readonly utilService: UtilService) {}
 
-  @Post()
+  @Post('/merge-excels')
   @Header('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
   @Header('Content-Disposition', 'attachment; filename=output.xlsx')
   @UseInterceptors(AnyFilesInterceptor())

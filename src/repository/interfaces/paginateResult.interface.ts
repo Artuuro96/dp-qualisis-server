@@ -3,4 +3,5 @@ export interface PaginateResult {
   total: number;
   page: number;
   pages: number;
+  perPage: number;
 }

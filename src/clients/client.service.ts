@@ -47,7 +47,7 @@ export class ClientService {
    * @description Find all the client paginated
    * @returns {PaginateResult} Object with the client paginate
    */
-  async findAll(keyValue = '', skip = 0, limit?: number): Promise<PaginateResult> {
+  async findAll(keyValue = '', skip = 0, limit = 10): Promise<PaginateResult> {
     skip = Number(skip);
     limit = Number(limit);
     const options = {
@@ -70,6 +70,7 @@ export class ClientService {
       total: countclients,
       page: skip,
       pages: Math.ceil(countclients / limit) || 0,
+      perPage: limit,
     };
   }
 

@@ -47,7 +47,7 @@ export class EntryService {
    * @description Find all the Entry paginated
    * @returns {PaginateResult} Object with the Entry paginate
    */
-  async findAll(keyValue = '', skip = 0, limit?: number): Promise<PaginateResult> {
+  async findAll(keyValue = '', skip = 0, limit = 10): Promise<PaginateResult> {
     skip = Number(skip);
     limit = Number(limit);
     const options = {
@@ -70,6 +70,7 @@ export class EntryService {
       total: countentries,
       page: skip,
       pages: Math.ceil(countentries / limit) || 0,
+      perPage: limit,
     };
   }
 

@@ -23,6 +23,12 @@ export class Order extends Base {
   @Prop()
   description?: string;
 
+  @Prop()
+  endDate?: Date;
+
+  @Prop()
+  startDate?: Date;
+
   /*constructor(Order:Partial<Order>) {
     super(Order)
     Object.assign(this, Order)

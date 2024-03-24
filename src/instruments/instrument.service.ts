@@ -47,7 +47,7 @@ export class InstrumentService {
    * @description Find all the instrument paginated
    * @returns {PaginateResult} Object with the instrument paginate
    */
-  async findAll(keyValue = '', skip = 0, limit?: number): Promise<PaginateResult> {
+  async findAll(keyValue = '', skip = 0, limit = 10): Promise<PaginateResult> {
     skip = Number(skip);
     limit = Number(limit);
     const options = {
@@ -70,6 +70,7 @@ export class InstrumentService {
       total: countinstruments,
       page: skip,
       pages: Math.ceil(countinstruments / limit) || 0,
+      perPage: limit,
     };
   }
 
