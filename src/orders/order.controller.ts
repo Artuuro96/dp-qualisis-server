@@ -13,6 +13,15 @@ import { Context } from 'src/auth/context/execution-ctx';
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
+  @Post('/assign-order')
+  async assignOrder(
+    @Body() { instrumentsIds, orderId },
+    @ExecutionCtx() executionCtx: Context,
+  ): Promise<Order> {
+    console.log(executionCtx);
+    return this.orderService.assignOrder(instrumentsIds, orderId, executionCtx);
+  }
+
   @Post()
   async create(@Body() order: OrderDTO, @ExecutionCtx() executionCtx: Context): Promise<Order> {
     console.log(executionCtx);
@@ -28,8 +37,8 @@ export class OrderController {
   }
 
   @Get('/:orderId')
-  async findById(@Param('orderId') orderId: string): Promise<Order> {
-    return this.orderService.findById(orderId);
+  async findById(@Param('orderId') orderId: string, @ExecutionCtx() executionCtx: Context): Promise<Order> {
+    return this.orderService.findById(orderId, executionCtx);
   }
 
   @Get()

@@ -10,11 +10,12 @@ export class InstrumentDTO {
   })
   entryId: string;
 
+  @IsOptional()
   @IsString()
   @IsNotEmpty()
   @IsDefined()
   @ApiProperty({
-    required: true,
+    required: false,
   })
   orderId: string;
 

@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsOptional, IsDefined, IsEnum } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, IsDefined, IsEnum, IsArray, ArrayUnique } from 'class-validator';
 import { StatusEnum } from '../repository/enums/status.enum';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -55,4 +55,9 @@ export class OrderDTO {
   @IsString()
   @IsNotEmpty()
   endDate?: string;
+
+  @IsOptional()
+  @IsArray()
+  @ArrayUnique()
+  instrumentsIds?: string[];
 }

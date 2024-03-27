@@ -38,4 +38,19 @@ export class InstrumentRepository {
       new: true,
     });
   }
+
+  async updateManyById(instrumentIds: string[], updatedFields: Partial<Instrument>): Promise<Instrument[]> {
+    const updatedInstruments: Instrument[] = [];
+    for (const instrumentId of instrumentIds) {
+      const updatedInstrument = await this.instrumentModel.findOneAndUpdate(
+        { _id: instrumentId },
+        updatedFields,
+        { new: true },
+      );
+      if (updatedInstrument) {
+        updatedInstruments.push(updatedInstrument);
+      }
+    }
+    return updatedInstruments;
+  }
 }

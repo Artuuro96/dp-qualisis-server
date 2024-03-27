@@ -1,5 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { OrderRepository } from '../repository/repositories/order.repository';
+import { InstrumentRepository } from '../repository/repositories/instrument.repository';
 import { Order } from '../repository/schemas/order.schema';
 import { PaginateResult } from '../repository/interfaces/paginateResult.interface';
 import { OrderDTO } from '../dtos/order.dto';
@@ -11,6 +12,7 @@ import { AcmaClient } from 'src/client/acma.client';
 export class OrderService {
   constructor(
     private orderRepository: OrderRepository,
+    private instrumentRepository: InstrumentRepository,
     private acmaClient: AcmaClient,
   ) {}
 
@@ -39,7 +41,39 @@ export class OrderService {
     };
 
     const orderCreated = await this.orderRepository.create(newOrder);
+    if (!isNil(order.instrumentsIds) && order.instrumentsIds.length > 0) {
+      await this.assignOrderToInstruments(order.instrumentsIds, orderCreated._id.toString(), executionCtx);
+    }
     return orderCreated;
+  }
+
+  /**
+   *
+   * @param {string[]} instrumentsIds Ids for the instruments to update
+   * @param {string} orderId Order that will be updated
+   * @param {object} executionCtx User Context
+   * @returns {Object} Returns the order
+   */
+  async assignOrder(instrumentsIds: string[], orderId: string, executionCtx: Context) {
+    const orderFound = await this.orderRepository.findById(orderId, {
+      _id: 1,
+      deleted: 1,
+    });
+
+    if (isNil(orderFound)) throw new NotFoundException('Order not found');
+    if (orderFound.deleted) throw new NotFoundException('Order not found');
+
+    if (!isNil(instrumentsIds) && instrumentsIds.length > 0) {
+      await this.assignOrderToInstruments(instrumentsIds, orderFound._id.toString(), executionCtx);
+    }
+    return orderFound;
+  }
+
+  async assignOrderToInstruments(instrumentsId: string[], orderId: string, executionCtx: Context) {
+    return await this.instrumentRepository.updateManyById(instrumentsId, {
+      orderId,
+      updatedBy: executionCtx.userId,
+    });
   }
 
   /**
@@ -48,11 +82,55 @@ export class OrderService {
    * @description Finds a order with his ID
    * @returns {Object} Returns the order found
    */
-  async findById(orderId): Promise<Order> {
+  async findById(orderId, executionCtx): Promise<Order> {
     const orderFound = await this.orderRepository.findById(orderId);
     if (isNil(orderFound)) throw new NotFoundException('order not found');
     if (orderFound.deleted) throw new NotFoundException('order not found');
-    return orderFound;
+    const uniqIds = [...new Set([orderFound.vendorId, orderFound.workerId])];
+    const usersData = await this.acmaClient.getUserInfo(uniqIds, executionCtx.token);
+
+    const worker = usersData.find((element) => element.id === orderFound.workerId);
+    const vendor = usersData.find((element) => element.id === orderFound.vendorId);
+
+    const query = {
+      orderId: orderFound._id,
+    };
+    const instruments = await this.instrumentRepository.find({ query });
+
+    const orderFormated = {
+      _id: orderFound._id,
+      createdAt: orderFound.createdAt,
+      createdBy: orderFound.createdBy,
+      updatedAt: orderFound.updatedAt,
+      workerId: orderFound.workerId,
+      vendorId: orderFound.vendorId,
+      name: orderFound.name,
+      status: orderFound.status,
+      description: orderFound.description,
+      endDate: orderFound.endDate,
+      startDate: orderFound.startDate,
+      worker: {
+        id: worker.id,
+        name: worker.name,
+        lastName: worker.lastName,
+        secondLastName: worker.secondLastName,
+        username: worker.username,
+        email: worker.email,
+        activeRole: worker.activeRole,
+      },
+      vendor: {
+        id: vendor.id,
+        name: vendor.name,
+        lastName: vendor.lastName,
+        secondLastName: vendor.secondLastName,
+        username: vendor.username,
+        email: vendor.email,
+        activeRole: vendor.activeRole,
+      },
+      instruments,
+    };
+
+    return orderFormated;
   }
 
   /**
