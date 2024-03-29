@@ -7,6 +7,7 @@ import { EntryService } from './entry.service';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { ExecutionCtx } from 'src/auth/decorators/execution-ctx.decorator';
 import { Context } from 'src/auth/context/execution-ctx';
+import { Client } from 'src/repository/schemas/client.schema';
 
 @Controller('entries')
 @UseGuards(AuthGuard)
@@ -19,7 +20,7 @@ export class EntryController {
   }
 
   @Get('/:entryId')
-  async findById(@Param('entryId') entryId: string): Promise<Entry> {
+  async findById(@Param('entryId') entryId: string): Promise<{ entry: Entry; client: Client | null }> {
     return this.entryService.findById(entryId);
   }
 

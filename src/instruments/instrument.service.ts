@@ -1,14 +1,22 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InstrumentRepository } from '../repository/repositories/instrument.repository';
+import { EntryRepository } from '../repository/repositories/entry.repository';
+import { OrderRepository } from '../repository/repositories/order.repository';
 import { Instrument } from '../repository/schemas/instrument.schema';
 import { PaginateResult } from '../repository/interfaces/paginateResult.interface';
 import { InstrumentDTO } from '../dtos/instrument.dto';
 import { isNil } from 'lodash';
 import { Context } from 'src/auth/context/execution-ctx';
+import { Entry } from 'src/repository/schemas/entry.schema';
+import { Order } from 'src/repository/schemas/order.schema';
 
 @Injectable()
 export class InstrumentService {
-  constructor(private instrumentRepository: InstrumentRepository) {}
+  constructor(
+    private instrumentRepository: InstrumentRepository,
+    private entryRepository: EntryRepository,
+    private orderRepository: OrderRepository,
+  ) {}
 
   /**
    * @name create
@@ -32,11 +40,28 @@ export class InstrumentService {
    * @description Finds a instrument with his ID
    * @returns {Object} Returns the instrument found
    */
-  async findById(instrumentId): Promise<Instrument> {
+  async findById(
+    instrumentId,
+  ): Promise<{ instrument: Instrument; entry: Entry | null; order: Order | null }> {
     const instrumentFound = await this.instrumentRepository.findById(instrumentId);
+
     if (isNil(instrumentFound)) throw new NotFoundException('instrument not found');
     if (instrumentFound.deleted) throw new NotFoundException('instrument not found');
-    return instrumentFound;
+
+    const promiseFound = [];
+    if (!isNil(instrumentFound.entryId))
+      promiseFound.push(this.entryRepository.findById(instrumentFound.entryId));
+
+    if (!isNil(instrumentFound.orderId))
+      promiseFound.push(this.entryRepository.findById(instrumentFound.entryId));
+
+    const [entryFound, orderFound] = await Promise.all(promiseFound);
+
+    return {
+      instrument: instrumentFound,
+      entry: entryFound,
+      order: orderFound,
+    };
   }
 
   /**

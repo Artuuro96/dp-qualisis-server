@@ -7,6 +7,8 @@ import { InstrumentService } from './instrument.service';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { ExecutionCtx } from 'src/auth/decorators/execution-ctx.decorator';
 import { Context } from 'src/auth/context/execution-ctx';
+import { Entry } from 'src/repository/schemas/entry.schema';
+import { Order } from 'src/repository/schemas/order.schema';
 
 @Controller('instruments')
 @UseGuards(AuthGuard)
@@ -22,7 +24,9 @@ export class InstrumentController {
   }
 
   @Get('/:instrumentId')
-  async findById(@Param('instrumentId') instrumentId: string): Promise<Instrument> {
+  async findById(
+    @Param('instrumentId') instrumentId: string,
+  ): Promise<{ instrument: Instrument; entry: Entry | null; order: Order | null }> {
     return this.instrumentService.findById(instrumentId);
   }
 

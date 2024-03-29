@@ -26,6 +26,15 @@ export class OrderService {
     const { startDate, endDate } = order;
     let newStartDate: Date;
     let newEndDate: Date;
+    const updateInstruments = !isNil(order.instrumentsIds) && order.instrumentsIds.length > 0;
+
+    if (updateInstruments) {
+      const instrumentsFound = order.instrumentsIds.map((id) => this.instrumentRepository.findById(id));
+      const testid = await Promise.all(instrumentsFound).catch(() => {
+        throw new BadRequestException('Invalid instrument Id');
+      });
+      if (testid.includes(null)) throw new NotFoundException('Not existing instrument id');
+    }
 
     if (isNil(startDate)) newStartDate = new Date();
     if (isNil(endDate)) {
@@ -41,7 +50,7 @@ export class OrderService {
     };
 
     const orderCreated = await this.orderRepository.create(newOrder);
-    if (!isNil(order.instrumentsIds) && order.instrumentsIds.length > 0) {
+    if (updateInstruments) {
       await this.assignOrderToInstruments(order.instrumentsIds, orderCreated._id.toString(), executionCtx);
     }
     return orderCreated;
@@ -59,9 +68,18 @@ export class OrderService {
       _id: 1,
       deleted: 1,
     });
+    const updateInstruments = !isNil(instrumentsIds) && instrumentsIds.length > 0;
 
     if (isNil(orderFound)) throw new NotFoundException('Order not found');
     if (orderFound.deleted) throw new NotFoundException('Order not found');
+
+    if (updateInstruments) {
+      const instrumentsFound = instrumentsIds.map((id) => this.instrumentRepository.findById(id));
+      const testid = await Promise.all(instrumentsFound).catch(() => {
+        throw new BadRequestException('Invalid instrument Id');
+      });
+      if (testid.includes(null)) throw new NotFoundException('Not existing instrument id');
+    }
 
     if (!isNil(instrumentsIds) && instrumentsIds.length > 0) {
       await this.assignOrderToInstruments(instrumentsIds, orderFound._id.toString(), executionCtx);

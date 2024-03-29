@@ -1,14 +1,19 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { EntryRepository } from '../repository/repositories/entry.repository';
+import { ClientRepository } from '../repository/repositories/client.repository';
 import { Entry } from '../repository/schemas/entry.schema';
 import { PaginateResult } from '../repository/interfaces/paginateResult.interface';
 import { EntryDTO } from '../dtos/entry.dto';
 import { isNil } from 'lodash';
 import { Context } from 'src/auth/context/execution-ctx';
+import { Client } from 'src/repository/schemas/client.schema';
 
 @Injectable()
 export class EntryService {
-  constructor(private entryRepository: EntryRepository) {}
+  constructor(
+    private entryRepository: EntryRepository,
+    private clientRepository: ClientRepository,
+  ) {}
 
   /**
    * @name create
@@ -32,11 +37,18 @@ export class EntryService {
    * @description Finds a entry with his ID
    * @returns {Object} Returns the entry found
    */
-  async findById(entryId): Promise<Entry> {
+  async findById(entryId): Promise<{ entry: Entry; client: Client | null }> {
     const entryFound = await this.entryRepository.findById(entryId);
     if (isNil(entryFound)) throw new NotFoundException('Entry not found');
     if (entryFound.deleted) throw new NotFoundException('Entry not found');
-    return entryFound;
+
+    let clientFound: Client;
+    if (!isNil(entryFound.clientId)) clientFound = await this.clientRepository.findById(entryFound.clientId);
+
+    return {
+      entry: entryFound,
+      client: clientFound,
+    };
   }
 
   /**
