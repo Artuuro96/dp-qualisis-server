@@ -7,6 +7,7 @@ import { OrderDTO } from '../dtos/order.dto';
 import { isNil, isNaN } from 'lodash';
 import { Context } from 'src/auth/context/execution-ctx';
 import { AcmaClient } from 'src/client/acma.client';
+import { Instrument } from 'src/repository/schemas/instrument.schema';
 
 @Injectable()
 export class OrderService {
@@ -159,7 +160,7 @@ export class OrderService {
    * @description Find all the order paginated
    * @returns {PaginateResult} Object with the order paginate
    */
-  async findAll(keyValue = '', skip = 0, limit = 10): Promise<PaginateResult> {
+  async findAll(keyValue = '', skip = 0, limit = 10, executionCtx): Promise<PaginateResult> {
     skip = Number(skip);
     limit = Number(limit);
     const options = {
@@ -174,8 +175,79 @@ export class OrderService {
 
     const orders = await this.orderRepository.find({ query, options });
     const countorders = await this.orderRepository.count(query);
+    const usersIds = [];
+    const instrumentsPromise = [];
+
+    orders.forEach((order) => {
+      const query = {
+        orderId: order._id,
+      };
+
+      instrumentsPromise.push(this.instrumentRepository.find({ query }));
+
+      usersIds.push(order.workerId);
+      usersIds.push(order.vendorId);
+    });
+
+    const uniqIds = [...new Set(usersIds)];
+    const usersData = await this.acmaClient.getUserInfo(uniqIds, executionCtx.token);
+
+    const intrumentsFound = await Promise.all(instrumentsPromise);
+    const flattedInstruments = intrumentsFound.flat();
+
+    const newOrders = orders.map((order) => {
+      const worker = usersData.find((user) => user.id === order.workerId);
+      const vendor = usersData.find((user) => user.id === order.vendorId);
+
+      const instruments = flattedInstruments
+        .filter((inst: Instrument) => inst.orderId === order._id.toString())
+        .map((instFound: Instrument) => {
+          return {
+            id: instFound?._id,
+            entryId: instFound?.entryId,
+            name: instFound?.name,
+            type: instFound?.type,
+            description: instFound?.description,
+          };
+        });
+
+      const newOrder = {
+        _id: order._id,
+        createdAt: order.createdAt,
+        createdBy: order.createdBy,
+        updatedAt: order.updatedAt,
+        workerId: order.workerId,
+        vendorId: order.vendorId,
+        name: order.name,
+        status: order.status,
+        description: order.description,
+        endDate: order.endDate,
+        startDate: order.startDate,
+        worker: {
+          id: worker.id,
+          name: worker?.name,
+          lastName: worker?.lastName,
+          secondLastName: worker?.secondLastName,
+          username: worker?.username,
+          email: worker?.email,
+          activeRole: worker?.activeRole,
+        },
+        vendor: {
+          id: vendor?.id,
+          name: vendor?.name,
+          lastName: vendor?.lastName,
+          secondLastName: vendor?.secondLastName,
+          username: vendor?.username,
+          email: vendor?.email,
+          activeRole: vendor?.activeRole,
+        },
+        instruments,
+      };
+      return newOrder;
+    });
+
     return {
-      result: orders,
+      result: newOrders,
       total: countorders,
       page: skip,
       pages: Math.ceil(countorders / limit) || 0,
@@ -220,18 +292,45 @@ export class OrderService {
     const orders = await this.orderRepository.find({ query, options });
     const countorders = await this.orderRepository.count(query);
     const usersIds = [];
+    const instrumentsPromise = [];
     orders.forEach((order) => {
       usersIds.push(order.workerId);
       usersIds.push(order.vendorId);
     });
 
-    const uniqIds = [...new Set(usersIds)];
+    orders.forEach((order) => {
+      const query = {
+        orderId: order._id,
+      };
 
+      instrumentsPromise.push(this.instrumentRepository.find({ query }));
+
+      usersIds.push(order.workerId);
+      usersIds.push(order.vendorId);
+    });
+
+    const uniqIds = [...new Set(usersIds)];
     const usersData = await this.acmaClient.getUserInfo(uniqIds, executionCtx.token);
 
+    const intrumentsFound = await Promise.all(instrumentsPromise);
+    const flattedInstruments = intrumentsFound.flat();
+
     const newOrders = orders.map((order) => {
-      const worker = usersData.find((element) => element.id === order.workerId);
-      const vendor = usersData.find((element) => element.id === order.vendorId);
+      const worker = usersData.find((user) => user.id === order.workerId);
+      const vendor = usersData.find((user) => user.id === order.vendorId);
+
+      const instruments = flattedInstruments
+        .filter((inst: Instrument) => inst.orderId === order._id.toString())
+        .map((instFound: Instrument) => {
+          return {
+            id: instFound?._id,
+            entryId: instFound?.entryId,
+            name: instFound?.name,
+            type: instFound?.type,
+            description: instFound?.description,
+          };
+        });
+
       const newOrder = {
         _id: order._id,
         createdAt: order.createdAt,
@@ -262,6 +361,7 @@ export class OrderService {
           email: vendor?.email,
           activeRole: vendor?.activeRole,
         },
+        instruments,
       };
       return newOrder;
     });

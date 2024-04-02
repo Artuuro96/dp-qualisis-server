@@ -42,8 +42,11 @@ export class OrderController {
   }
 
   @Get()
-  async findAll(@Query() { skip, limit, keyValue }: PaginationParamsDTO): Promise<PaginateResult> {
-    return this.orderService.findAll(keyValue, skip, limit);
+  async findAll(
+    @Query() { skip, limit, keyValue }: PaginationParamsDTO,
+    @ExecutionCtx() executionCtx: Context,
+  ): Promise<PaginateResult> {
+    return this.orderService.findAll(keyValue, skip, limit, executionCtx);
   }
 
   @Patch('/:orderId')
