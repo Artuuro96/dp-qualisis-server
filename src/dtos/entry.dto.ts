@@ -8,7 +8,7 @@ export class EntryDTO {
   @ApiProperty({
     required: false,
   })
-  orderNumber?: string;
+  entryNumber?: string;
 
   @IsString()
   @IsNotEmpty()

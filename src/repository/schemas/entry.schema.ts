@@ -9,7 +9,7 @@ export class Entry extends Base {
   _id?: Types.ObjectId;
 
   @Prop()
-  orderNumber?: string;
+  entryNumber?: string;
 
   @Prop()
   clientId: string;
