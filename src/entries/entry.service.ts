@@ -69,7 +69,7 @@ export class EntryService {
 
     //need to find the way of doing a variable search
     const query = {
-      name: new RegExp(`${keyValue}`, 'i'),
+      description: new RegExp(`${keyValue}`, 'i'),
     };
 
     const entries = await this.entryRepository.find({
