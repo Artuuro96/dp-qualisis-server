@@ -38,4 +38,8 @@ export class EntryRepository {
       new: true,
     });
   }
+
+  async aggregate(aggregateQuery): Promise<any> {
+    return this.entryModel.aggregate(aggregateQuery);
+  }
 }

@@ -62,26 +62,77 @@ export class EntryService {
   async findAll(keyValue = '', skip = 0, limit = 10): Promise<PaginateResult> {
     skip = Number(skip);
     limit = Number(limit);
-    const options = {
-      skip: skip > 0 ? skip - 1 : skip,
-      limit,
-    };
 
-    //need to find the way of doing a variable search
-    const query = {
-      description: new RegExp(`${keyValue}`, 'i'),
-    };
+    const findAggregate = [
+      {
+        $addFields: {
+          clientId: { $toObjectId: '$clientId' },
+        },
+      },
+      {
+        $lookup: {
+          from: 'clients',
+          localField: 'clientId',
+          foreignField: '_id',
+          as: 'client',
+        },
+      },
+      {
+        $match: {
+          $or: [
+            { entryNumber: { $regex: new RegExp(`${keyValue}`, 'i') } },
+            { 'client.name': { $regex: new RegExp(`${keyValue}`, 'i') } },
+          ],
+        },
+      },
+      {
+        $addFields: {
+          client: { $arrayElemAt: ['$client', 0] },
+        },
+      },
+      { $skip: skip },
+      { $limit: limit },
+    ];
 
-    const entries = await this.entryRepository.find({
-      query,
-      options,
-    });
-    const countentries = await this.entryRepository.count(query);
+    const countAggregate = [
+      {
+        $addFields: {
+          clientId: { $toObjectId: '$clientId' },
+        },
+      },
+      {
+        $lookup: {
+          from: 'clients',
+          localField: 'clientId',
+          foreignField: '_id',
+          as: 'client',
+        },
+      },
+      {
+        $match: {
+          $or: [
+            { entryNumber: { $regex: new RegExp(`${keyValue}`, 'i') } },
+            { 'client.name': { $regex: new RegExp(`${keyValue}`, 'i') } },
+          ],
+        },
+      },
+      {
+        $addFields: {
+          client: { $arrayElemAt: ['$client', 0] },
+        },
+      },
+      { $count: 'count' },
+    ];
+
+    // Aggregate?
+    const entriesFound = await this.entryRepository.aggregate(findAggregate);
+    const countEntries = await this.entryRepository.aggregate(countAggregate);
+
     return {
-      result: entries,
-      total: countentries,
+      result: entriesFound,
+      total: countEntries[0].count,
       page: skip,
-      pages: Math.ceil(countentries / limit) || 0,
+      pages: Math.ceil(countEntries[0].count / limit) || 0,
       perPage: limit,
     };
   }
