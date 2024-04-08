@@ -130,9 +130,9 @@ export class EntryService {
 
     return {
       result: entriesFound,
-      total: countEntries[0].count,
+      total: countEntries[0]?.count,
       page: skip,
-      pages: Math.ceil(countEntries[0].count / limit) || 0,
+      pages: Math.ceil(countEntries[0]?.count / limit) || 0,
       perPage: limit,
     };
   }
