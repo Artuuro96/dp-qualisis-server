@@ -83,6 +83,8 @@ export class EntryService {
             { entryNumber: { $regex: new RegExp(`${keyValue}`, 'i') } },
             { 'client.name': { $regex: new RegExp(`${keyValue}`, 'i') } },
           ],
+          deleted: false,
+          'client.deleted': false,
         },
       },
       {
@@ -114,6 +116,8 @@ export class EntryService {
             { entryNumber: { $regex: new RegExp(`${keyValue}`, 'i') } },
             { 'client.name': { $regex: new RegExp(`${keyValue}`, 'i') } },
           ],
+          deleted: false,
+          'client.deleted': false,
         },
       },
       {
