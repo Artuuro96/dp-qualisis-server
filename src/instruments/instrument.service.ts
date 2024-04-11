@@ -53,7 +53,7 @@ export class InstrumentService {
       promiseFound.push(this.entryRepository.findById(instrumentFound.entryId));
 
     if (!isNil(instrumentFound.orderId))
-      promiseFound.push(this.entryRepository.findById(instrumentFound.entryId));
+      promiseFound.push(this.orderRepository.findById(instrumentFound.orderId));
 
     const [entryFound, orderFound] = await Promise.all(promiseFound);
 
@@ -61,6 +61,63 @@ export class InstrumentService {
       instrument: instrumentFound,
       entry: entryFound,
       order: orderFound,
+    };
+  }
+
+  async findByEntryId(entryId, skip = 0, limit = 10): Promise<PaginateResult> {
+    console.log(entryId);
+    skip = Number(skip);
+    limit = Number(limit);
+    const options = {
+      skip: skip > 0 ? skip - 1 : skip,
+      limit,
+    };
+
+    const query = {
+      entryId,
+      deleted: false,
+    };
+
+    const instrumentsFound = await this.instrumentRepository.find({ query, options });
+    const countInstrumentFound = await this.instrumentRepository.count({ query });
+
+    const promiseEntries = [];
+    const promiseOrders = [];
+
+    instrumentsFound.forEach((instrument) => {
+      if (!isNil(instrument.entryId)) promiseEntries.push(this.entryRepository.findById(instrument.entryId));
+
+      if (!isNil(instrument.orderId)) promiseOrders.push(this.entryRepository.findById(instrument.entryId));
+    });
+
+    const entriesFound = await Promise.all(promiseEntries);
+    const ordersFound = await Promise.all(promiseOrders);
+    const newInstruments = instrumentsFound.map((instrument) => {
+      const entryFound = entriesFound.find((entry) => entry.id === instrument.entryId);
+      const orderFound = ordersFound.find((order) => order.id === instrument.orderId);
+      console.log(orderFound, instrument.orderId);
+      return {
+        _id: instrument._id,
+        createdAt: instrument.createdAt,
+        createdBy: instrument.createdBy,
+        updatedAt: instrument.updatedAt,
+        entryId: instrument.entryId,
+        name: instrument.name,
+        type: instrument.type,
+        description: instrument.description,
+        orderId: instrument.orderId,
+        updatedBy: instrument.updatedBy,
+        order: orderFound,
+        entry: entryFound,
+      };
+    });
+
+    return {
+      result: newInstruments,
+      total: countInstrumentFound,
+      page: skip,
+      pages: Math.ceil(countInstrumentFound / limit) || 0,
+      perPage: limit,
     };
   }
 
@@ -89,12 +146,12 @@ export class InstrumentService {
       query,
       options,
     });
-    const countinstruments = await this.instrumentRepository.count(query);
+    const countInstruments = await this.instrumentRepository.count(query);
     return {
       result: instruments,
-      total: countinstruments,
+      total: countInstruments,
       page: skip,
-      pages: Math.ceil(countinstruments / limit) || 0,
+      pages: Math.ceil(countInstruments / limit) || 0,
       perPage: limit,
     };
   }

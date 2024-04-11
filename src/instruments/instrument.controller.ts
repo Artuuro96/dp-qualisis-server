@@ -23,6 +23,11 @@ export class InstrumentController {
     return this.instrumentService.create(instrument, executionCtx);
   }
 
+  @Get('/entry/:entryId')
+  async findByEntryId(@Param('entryId') entryId: string): Promise<PaginateResult> {
+    return this.instrumentService.findByEntryId(entryId);
+  }
+
   @Get('/:instrumentId')
   async findById(
     @Param('instrumentId') instrumentId: string,
