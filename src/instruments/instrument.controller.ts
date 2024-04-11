@@ -24,8 +24,11 @@ export class InstrumentController {
   }
 
   @Get('/entry/:entryId')
-  async findByEntryId(@Param('entryId') entryId: string): Promise<PaginateResult> {
-    return this.instrumentService.findByEntryId(entryId);
+  async findByEntryId(
+    @Param('entryId') entryId: string,
+    @Query() { skip, limit }: PaginationParamsDTO,
+  ): Promise<PaginateResult> {
+    return this.instrumentService.findByEntryId(entryId, skip, limit);
   }
 
   @Get('/:instrumentId')
