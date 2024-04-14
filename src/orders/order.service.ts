@@ -40,7 +40,6 @@ export class OrderService {
     if (isNil(startDate)) newStartDate = new Date();
     else {
       newStartDate = new Date(startDate);
-      endDate;
     }
     if (isNil(endDate)) {
       newEndDate = new Date();
