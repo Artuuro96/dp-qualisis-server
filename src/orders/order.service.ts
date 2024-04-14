@@ -38,9 +38,14 @@ export class OrderService {
     }
 
     if (isNil(startDate)) newStartDate = new Date();
+    else {
+      newStartDate = new Date(startDate);
+    }
     if (isNil(endDate)) {
       newEndDate = new Date();
       newEndDate.setDate(newEndDate.getDate() + 1);
+    } else {
+      newEndDate = new Date(endDate);
     }
 
     const newOrder: Order = {
