@@ -40,6 +40,7 @@ export class OrderService {
     if (isNil(startDate)) newStartDate = new Date();
     else {
       newStartDate = new Date(startDate);
+      endDate;
     }
     if (isNil(endDate)) {
       newEndDate = new Date();
@@ -47,6 +48,9 @@ export class OrderService {
     } else {
       newEndDate = new Date(endDate);
     }
+
+    if (isNaN(newStartDate.getTime()) || isNaN(newEndDate.getTime()))
+      throw new NotFoundException('startDate and endDate a valid date is required');
 
     const newOrder: Order = {
       ...order,
