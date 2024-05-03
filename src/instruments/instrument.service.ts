@@ -80,7 +80,7 @@ export class InstrumentService {
 
     const instrumentsFound = await this.instrumentRepository.find({ query, options });
     const countInstrumentFound = await this.instrumentRepository.count({ query });
-
+    console.log(instrumentsFound);
     const promiseEntries = [];
     const promiseOrders = [];
 
@@ -111,7 +111,7 @@ export class InstrumentService {
         entry: entryFound,
       };
     });
-
+    console.log(newInstruments);
     return {
       result: newInstruments,
       total: countInstrumentFound,

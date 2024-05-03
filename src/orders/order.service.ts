@@ -254,6 +254,7 @@ export class OrderService {
       return newOrder;
     });
 
+    console.log(newOrders);
     return {
       result: newOrders,
       total: countorders,

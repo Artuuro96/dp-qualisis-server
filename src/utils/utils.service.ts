@@ -36,7 +36,9 @@ export class UtilService {
         values: filtered,
       });
     });
-    const sensor1Values = data[0].values;
+
+    console.log(data);
+    const sensor1Values = data[0]?.values || [];
 
     const sensorValuesLegible = sensor1Values.map((item) => {
       const dateSeries = item[0];
