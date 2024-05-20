@@ -179,6 +179,7 @@ export class OrderService {
     //need to find the way of doing a variable search
     const query = {
       name: new RegExp(`${keyValue}`, 'i'),
+      deleted: false,
     };
 
     const orders = await this.orderRepository.find({ query, options });
@@ -195,6 +196,7 @@ export class OrderService {
 
       usersIds.push(order.workerId);
       usersIds.push(order.vendorId);
+      usersIds.push(order.createdBy);
     });
 
     const uniqIds = [...new Set(usersIds)];
@@ -206,6 +208,7 @@ export class OrderService {
     const newOrders = orders.map((order) => {
       const worker = usersData.find((user) => user.id === order.workerId);
       const vendor = usersData.find((user) => user.id === order.vendorId);
+      const creator = usersData.find((user) => user.id === order.createdBy);
 
       const instruments = flattedInstruments
         .filter((inst: Instrument) => inst.orderId === order._id.toString())
@@ -249,12 +252,20 @@ export class OrderService {
           email: vendor?.email,
           activeRole: vendor?.activeRole,
         },
+        creator: {
+          id: creator?.id,
+          name: creator?.name,
+          lastName: creator?.lastName,
+          secondLastName: creator?.secondLastName,
+          username: creator?.username,
+          email: creator?.email,
+          activeRole: creator?.activeRole,
+        },
         instruments,
       };
       return newOrder;
     });
 
-    console.log(newOrders);
     return {
       result: newOrders,
       total: countorders,
@@ -296,6 +307,7 @@ export class OrderService {
     const query = {
       startDate: { $gte: newStartDate },
       endDate: { $lt: newEndDate },
+      deleted: false,
     };
 
     const orders = await this.orderRepository.find({ query, options });

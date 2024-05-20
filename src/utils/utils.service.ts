@@ -13,10 +13,13 @@ export class UtilService {
       endDate = new Date().setHours(23, 59, 59, 999),
       deviceName,
     } = excelOptions;
-
     const data = [];
     startDate = new Date(startDate);
     endDate = new Date(endDate);
+
+    const localStartDate = startDate.setHours(startDate.getHours() - 6);
+    const localEndDate = endDate.setHours(endDate.getHours() - 6);
+
     if (isNil(deviceName)) deviceName = 'Sensor';
     files.forEach((file, index) => {
       const buffer = file.buffer;
@@ -27,8 +30,8 @@ export class UtilService {
 
       const filtered = jsonXlx.filter((item) => {
         const dateSample = new Date((item[0] - 25569) * 86400 * 1000);
-        if (dateSample >= startDate && dateSample <= endDate) {
-          return dateSample >= startDate && dateSample <= endDate;
+        if (dateSample >= localStartDate && dateSample <= localEndDate) {
+          return dateSample >= localStartDate && dateSample <= localEndDate;
         }
       });
       data.push({
@@ -37,7 +40,6 @@ export class UtilService {
       });
     });
 
-    console.log(data);
     const sensor1Values = data[0]?.values || [];
 
     const sensorValuesLegible = sensor1Values.map((item) => {

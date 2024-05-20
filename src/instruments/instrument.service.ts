@@ -65,7 +65,6 @@ export class InstrumentService {
   }
 
   async findByEntryId(entryId, skip = 0, limit = 10): Promise<PaginateResult> {
-    console.log(entryId);
     skip = Number(skip);
     limit = Number(limit);
     const options = {
@@ -80,7 +79,6 @@ export class InstrumentService {
 
     const instrumentsFound = await this.instrumentRepository.find({ query, options });
     const countInstrumentFound = await this.instrumentRepository.count({ query });
-    console.log(instrumentsFound);
     const promiseEntries = [];
     const promiseOrders = [];
 
@@ -95,7 +93,6 @@ export class InstrumentService {
     const newInstruments = instrumentsFound.map((instrument) => {
       const entryFound = entriesFound.find((entry) => entry.id === instrument.entryId);
       const orderFound = ordersFound.find((order) => order.id === instrument.orderId);
-      console.log(orderFound, instrument.orderId);
       return {
         _id: instrument._id,
         createdAt: instrument.createdAt,
@@ -111,7 +108,6 @@ export class InstrumentService {
         entry: entryFound,
       };
     });
-    console.log(newInstruments);
     return {
       result: newInstruments,
       total: countInstrumentFound,

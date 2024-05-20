@@ -18,13 +18,11 @@ export class OrderController {
     @Body() { instrumentsIds, orderId },
     @ExecutionCtx() executionCtx: Context,
   ): Promise<Order> {
-    console.log(executionCtx);
     return this.orderService.assignOrder(instrumentsIds, orderId, executionCtx);
   }
 
   @Post()
   async create(@Body() order: OrderDTO, @ExecutionCtx() executionCtx: Context): Promise<Order> {
-    console.log(executionCtx);
     return this.orderService.create(order, executionCtx);
   }
 

@@ -25,8 +25,11 @@ export class EntryController {
   }
 
   @Get()
-  async findAll(@Query() { skip, limit, keyValue }: PaginationParamsDTO): Promise<PaginateResult> {
-    return this.entryService.findAll(keyValue, skip, limit);
+  async findAll(
+    @Query() { skip, limit, keyValue }: PaginationParamsDTO,
+    @ExecutionCtx() executionCtx: Context,
+  ): Promise<PaginateResult> {
+    return this.entryService.findAll(keyValue, skip, limit, executionCtx);
   }
 
   @Patch('/:entryId')

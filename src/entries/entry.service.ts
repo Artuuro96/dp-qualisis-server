@@ -7,12 +7,14 @@ import { EntryDTO } from '../dtos/entry.dto';
 import { isNil } from 'lodash';
 import { Context } from 'src/auth/context/execution-ctx';
 import { Client } from 'src/repository/schemas/client.schema';
+import { AcmaClient } from 'src/client/acma.client';
 
 @Injectable()
 export class EntryService {
   constructor(
     private entryRepository: EntryRepository,
     private clientRepository: ClientRepository,
+    private acmaClient: AcmaClient,
   ) {}
 
   /**
@@ -59,7 +61,7 @@ export class EntryService {
    * @description Find all the Entry paginated
    * @returns {PaginateResult} Object with the Entry paginate
    */
-  async findAll(keyValue = '', skip = 0, limit = 10): Promise<PaginateResult> {
+  async findAll(keyValue = '', skip = 0, limit = 10, executionCtx: Context): Promise<PaginateResult> {
     skip = Number(skip);
     limit = Number(limit);
 
@@ -132,8 +134,22 @@ export class EntryService {
     const entriesFound = await this.entryRepository.aggregate(findAggregate);
     const countEntries = await this.entryRepository.aggregate(countAggregate);
 
+    const uniqIds: any[] = [...new Set(entriesFound.map((item: { createdBy: string }) => item.createdBy))];
+    const usersData = await this.acmaClient.getUserInfo(uniqIds, executionCtx.token);
+
+    entriesFound.usersData = usersData;
+    const newEntries = entriesFound.map((entry) => {
+      const createdBy = usersData.find((element) => element.id === entry.createdBy);
+      entry.createdBy = {
+        name: createdBy?.name,
+        id: createdBy?.id,
+        username: createdBy?.username,
+      };
+      return entry;
+    });
+
     return {
-      result: entriesFound,
+      result: newEntries,
       total: countEntries[0]?.count,
       page: skip,
       pages: Math.ceil(countEntries[0]?.count / limit) || 0,
